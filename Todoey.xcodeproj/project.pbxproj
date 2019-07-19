@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EA24754D22E1991C00B36C03 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA24754C22E1991C00B36C03 /* CategoryViewController.swift */; };
 		EAD15A0822BCB7FF00AF9304 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EAD15A0622BCB7FF00AF9304 /* DataModel.xcdatamodeld */; };
 		EAE8579222B8F5B4005263DB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE8579122B8F5B4005263DB /* AppDelegate.swift */; };
 		EAE8579422B8F5B4005263DB /* ToDoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE8579322B8F5B4005263DB /* ToDoListViewController.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EA24754C22E1991C00B36C03 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 		EAD15A0722BCB7FF00AF9304 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		EAE8578E22B8F5B4005263DB /* Todoey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todoey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EAE8579122B8F5B4005263DB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -48,6 +50,7 @@
 		EA828E6422BB33F100744321 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				EA24754C22E1991C00B36C03 /* CategoryViewController.swift */,
 				EAE8579322B8F5B4005263DB /* ToDoListViewController.swift */,
 			);
 			path = Controllers;
@@ -170,6 +173,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA24754D22E1991C00B36C03 /* CategoryViewController.swift in Sources */,
 				EAD15A0822BCB7FF00AF9304 /* DataModel.xcdatamodeld in Sources */,
 				EAE8579422B8F5B4005263DB /* ToDoListViewController.swift in Sources */,
 				EAE8579222B8F5B4005263DB /* AppDelegate.swift in Sources */,

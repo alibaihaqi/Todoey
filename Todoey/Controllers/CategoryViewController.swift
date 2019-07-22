@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class CategoryViewController: UITableViewController, ToDoListDelegate {
+class CategoryViewController: UITableViewController {
 
     var categoryArray = [Category]()
     
@@ -36,8 +36,8 @@ class CategoryViewController: UITableViewController, ToDoListDelegate {
     // MARK: - Table view delegate
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
         performSegue(withIdentifier: "goToItems", sender: self)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -84,15 +84,10 @@ class CategoryViewController: UITableViewController, ToDoListDelegate {
         }
     }
     
-    func userChooseCategory(category: String) {
-        print(category)
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToItems" {
             
             let destinationVC = segue.destination as! ToDoListViewController
-            destinationVC.delegate = self
             
             if let indexPath = tableView.indexPathForSelectedRow {
                 destinationVC.selectedCategory = categoryArray[indexPath.row]

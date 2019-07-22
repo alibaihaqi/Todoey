@@ -9,13 +9,7 @@
 import UIKit
 import CoreData
 
-protocol ToDoListDelegate {
-    func userChooseCategory(category: String)
-}
-
 class ToDoListViewController: UITableViewController {
-
-    var delegate: ToDoListDelegate?
     
     var itemArray = [Item]()
     var selectedCategory: Category? {

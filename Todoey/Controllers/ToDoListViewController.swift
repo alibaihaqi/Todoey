@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     var todoItems: Results<Item>?
@@ -24,6 +24,7 @@ class ToDoListViewController: UITableViewController {
         // Do any additional setup after loading the view.
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         loadItems()
+        tableView.rowHeight = 70.0
     }
 
     //MARK: TableView Datasource Methods
@@ -32,7 +33,7 @@ class ToDoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoCustomCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let item = todoItems?[indexPath.row] {
             cell.textLabel?.text = item.title
@@ -88,6 +89,7 @@ class ToDoListViewController: UITableViewController {
                         newItem.title = textField.text!
                         newItem.dateCreated = Date()
                         currentCategory.items.append(newItem)
+                        print(currentCategory)
                     }
                 } catch {
                     print("Error saving context \(error)")
@@ -123,6 +125,20 @@ class ToDoListViewController: UITableViewController {
     func loadItems() {
         todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         tableView.reloadData()
+    }
+    
+    // MARK: - Delete Data From Swipe
+    
+    override func updateModel(at indexPath: IndexPath) {
+        if let item = self.todoItems?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(item)
+                }
+            } catch {
+                print("Error deleting item, \(error)")
+            }
+        }
     }
 }
 

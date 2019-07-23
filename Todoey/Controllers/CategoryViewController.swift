@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
 
     let realm = try! Realm()
     var categories: Results<Category>?
@@ -18,6 +18,8 @@ class CategoryViewController: UITableViewController {
         super.viewDidLoad()
 
         loadCategories()
+        
+        tableView.rowHeight = 70.0
     }
 
     // MARK: - Table view data source
@@ -27,9 +29,9 @@ class CategoryViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories add here!"
-        
+
         return cell
     }
 
@@ -84,11 +86,27 @@ class CategoryViewController: UITableViewController {
         tableView.reloadData()
     }
     
+    // MARK: - Delete Data From Swipe
+    
+    override func updateModel(at indexPath: IndexPath) {
+        if let item = self.categories?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(item)
+                }
+            } catch {
+                print("Error deleting item, \(error)")
+            }
+        }
+        
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToItems" {
             
             let destinationVC = segue.destination as! ToDoListViewController
-            
+
+            print(tableView.indexPathForSelectedRow?.row)
             if let indexPath = tableView.indexPathForSelectedRow {
                 destinationVC.selectedCategory = categories?[indexPath.row]
             }

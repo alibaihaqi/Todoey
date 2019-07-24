@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class ToDoListViewController: SwipeTableViewController {
     
@@ -19,12 +20,31 @@ class ToDoListViewController: SwipeTableViewController {
         }
     }
 
+    @IBOutlet weak var searchBar: UISearchBar!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        loadItems()
+
         tableView.rowHeight = 70.0
+        tableView.separatorStyle = .none
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if let colour = selectedCategory?.color {
+            title = selectedCategory!.name
+            guard let navBar = navigationController?.navigationBar else { fatalError("Navigation Controller doesn't exist") }
+            
+            if let navBarColor = UIColor(hexString: colour) {
+                navBar.barTintColor = navBarColor
+                
+                navBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+                
+                searchBar.barTintColor = navBarColor
+            }
+            
+            
+        }
     }
 
     //MARK: TableView Datasource Methods
@@ -38,6 +58,11 @@ class ToDoListViewController: SwipeTableViewController {
         if let item = todoItems?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.done ? .checkmark : .none
+            
+            if let colour = UIColor(hexString: selectedCategory!.color)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(todoItems!.count)) {
+                cell.backgroundColor = colour
+                cell.textLabel?.textColor = ContrastColorOf(colour, returnFlat: true)
+            }
             
             // Ternary Operator ==>
             // value = condition ? valueIfTrue : valueIfFalse
@@ -89,7 +114,6 @@ class ToDoListViewController: SwipeTableViewController {
                         newItem.title = textField.text!
                         newItem.dateCreated = Date()
                         currentCategory.items.append(newItem)
-                        print(currentCategory)
                     }
                 } catch {
                     print("Error saving context \(error)")
@@ -134,6 +158,10 @@ class ToDoListViewController: SwipeTableViewController {
             do {
                 try self.realm.write {
                     self.realm.delete(item)
+                    DispatchQueue.main.async {
+                        self.loadItems()
+                        self.tableView.resignFirstResponder()
+                    }
                 }
             } catch {
                 print("Error deleting item, \(error)")

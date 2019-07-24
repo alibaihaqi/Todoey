@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class CategoryViewController: SwipeTableViewController {
 
@@ -20,6 +21,7 @@ class CategoryViewController: SwipeTableViewController {
         loadCategories()
         
         tableView.rowHeight = 70.0
+        tableView.separatorStyle = .none
     }
 
     // MARK: - Table view data source
@@ -30,6 +32,16 @@ class CategoryViewController: SwipeTableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        
+        if let categoryColor = categories?[indexPath.row].color {
+            cell.backgroundColor = UIColor(hexString: categoryColor)
+        } else {
+            let categoryColor = UIColor.randomFlat
+            cell.backgroundColor = categoryColor
+            updateColorCategories(category: categories?[indexPath.row], color: categoryColor.hexValue())
+        }
+        
+        
         cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories add here!"
 
         return cell
@@ -51,6 +63,7 @@ class CategoryViewController: SwipeTableViewController {
             
             let newCategory = Category()
             newCategory.name = textField.text!
+            newCategory.color = UIColor.randomFlat.hexValue()
             // what will happen once the user click the Add Item buttton on UI Alert
             
             self.save(category: newCategory)
@@ -67,7 +80,6 @@ class CategoryViewController: SwipeTableViewController {
     }
     
     // MARK: - Data Manipulation Methods
-    
     func save(category: Category) {
         do {
             try realm.write {
@@ -79,11 +91,23 @@ class CategoryViewController: SwipeTableViewController {
         tableView.reloadData()
     }
     
+    // MARK: - Load Categories
     func loadCategories() {
-        
-        categories = realm.objects(Category.self)
-        
+        categories = realm.objects(Category.self).sorted(byKeyPath: "name")
         tableView.reloadData()
+    }
+    
+    // MARK: - Update Categories
+    func updateColorCategories(category: Category?,color hexString: String) {
+        if let item = category {
+            do {
+                try realm.write {
+                    item.color = hexString
+                }
+            } catch {
+                print("Error updating color, \(error)")
+            }
+        }
     }
     
     // MARK: - Delete Data From Swipe
@@ -93,12 +117,15 @@ class CategoryViewController: SwipeTableViewController {
             do {
                 try self.realm.write {
                     self.realm.delete(item)
+                    DispatchQueue.main.async {
+                        self.loadCategories()
+                        self.tableView.resignFirstResponder()
+                    }
                 }
             } catch {
                 print("Error deleting item, \(error)")
             }
         }
-        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -106,7 +133,6 @@ class CategoryViewController: SwipeTableViewController {
             
             let destinationVC = segue.destination as! ToDoListViewController
 
-            print(tableView.indexPathForSelectedRow?.row)
             if let indexPath = tableView.indexPathForSelectedRow {
                 destinationVC.selectedCategory = categories?[indexPath.row]
             }

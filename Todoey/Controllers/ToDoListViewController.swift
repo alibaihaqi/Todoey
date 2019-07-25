@@ -30,23 +30,33 @@ class ToDoListViewController: SwipeTableViewController {
         
     }
     
+    // MARK: - View Will Appear - initiate when just in to this page
     override func viewWillAppear(_ animated: Bool) {
-        if let colour = selectedCategory?.color {
-            title = selectedCategory!.name
-            guard let navBar = navigationController?.navigationBar else { fatalError("Navigation Controller doesn't exist") }
-            
-            if let navBarColor = UIColor(hexString: colour) {
-                navBar.barTintColor = navBarColor
-                
-                navBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
-                
-                searchBar.barTintColor = navBarColor
-            }
-            
-            
-        }
+        
+        title = selectedCategory?.name
+        // change if to be guard
+        guard let colour = selectedCategory?.color else { fatalError("Selected Category Color doesn't exist") }
+        
+        updateNavBar(withHexCode: colour)
+        searchBar.barTintColor = UIColor(hexString: colour)
     }
 
+    // MARK: - View Will Disappear - initiate when out from this page
+    override func viewWillDisappear(_ animated: Bool) {
+        updateNavBar(withHexCode: "1D9BF6")
+    }
+    
+    // MARK: - Nav Bar Setup Methods
+    
+    func updateNavBar(withHexCode colourHexCode: String) {
+        guard let navBar = navigationController?.navigationBar else { fatalError("Navigation Controller doesn't exist") }
+        
+        guard let navBarColor = UIColor(hexString: colourHexCode) else { fatalError("NavBar Colour doesn't exist.") }
+        
+        navBar.barTintColor = navBarColor
+        navBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+    }
+    
     //MARK: TableView Datasource Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return todoItems?.count ?? 1
